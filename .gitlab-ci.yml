@@ -30,8 +30,8 @@ build-frontend-code-job:
 slack-notification-backend:
   stage: notify
   variables:
-    DEPLOY_CURL_COMMAND_BODY: '{"text":"${GITLAB_USER_NAME} собрал бек https://gitlab.praktikum-services.ru/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=${CI_JOB_NAME}&token=oRo3KjWqd3RmmxZJ2fpP."}'
-    DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data '$DEPLOY_CURL_COMMAND_BODY' https://hooks.slack.com/services/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'
+    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал бек https://gitlab.praktikum-services.ru/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=${CI_JOB_NAME}&token=oRo3KjWqd3RmmxZJ2fpP.\"}'
+    DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY" https://hooks.slack.com/services/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'
   only:
     changes:
     - backend/*
@@ -44,8 +44,8 @@ slack-notification-backend:
 slack-notification-frontend:
   stage: notify
   variables: 
-    DEPLOY_CURL_COMMAND_BODY: '{"text":"${GITLAB_USER_NAME} собрал фронт https://gitlab.praktikum-services.ru/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=${CI_JOB_NAME}&token=oRo3KjWqd3RmmxZJ2fpP."}'
-    DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data '$DEPLOY_CURL_COMMAND_BODY'  https://hooks.slack.com/services/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'
+    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал фронт https://gitlab.praktikum-services.ru/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=${CI_JOB_NAME}&token=oRo3KjWqd3RmmxZJ2fpP.\"}'
+    DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY"  https://hooks.slack.com/services/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'
   only:
     changes:
     - frontend/*
