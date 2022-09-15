@@ -1,0 +1,67 @@
+stages:
+  - build
+  - notify
+
+variables:
+    ARTIFACT_DOWNLOAD_API_TOKEN: 'uTAVSK6FwjXyVt2UK64x'
+
+build-backend-code-job:
+  stage: build  
+  only:
+    changes:
+    - backend/*
+  script:
+    - cd backend
+    - mvn package
+    - echo "BUILD_BACKEND_CI_JOB_ID=${CI_JOB_ID}" >> target/build_backend.env
+  artifacts:
+    paths:
+      - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
+    reports:
+        dotenv: backend/target/build_backend.env
+
+build-frontend-code-job:
+  stage: build  
+  only:
+    changes:
+    - frontend/*
+  script:        
+    - cd frontend
+    - npm install
+    - npm run build
+    - echo "BUILD_FRONTEND_CI_JOB_ID=${CI_JOB_ID}" >> dist/frontend/build_frontend.env
+  artifacts:
+    paths:
+      - frontend/dist/frontend
+    reports:
+      dotenv: frontend/dist/frontend/build_frontend.env
+
+slack-notification-backend:
+  stage: notify
+  variables:
+    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал бек https://gitlab.praktikum-services.ru/api/v4/projects/1255/jobs/$BUILD_BACKEND_CI_JOB_ID/artifacts?private_token=$ARTIFACT_DOWNLOAD_API_TOKEN.\"}'
+    DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY" https://hooks.slack.com/services/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'
+  only:
+    changes:
+    - backend/*
+  script:
+    - echo $DEPLOY_CURL_COMMAND
+    - 'eval "$DEPLOY_CURL_COMMAND"'
+  needs:
+    - job: build-backend-code-job
+      artifacts: true
+
+slack-notification-frontend:
+  stage: notify
+  variables: 
+    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал фронт https://gitlab.praktikum-services.ru/api/v4/projects/1255/jobs/$BUILD_FRONTEND_CI_JOB_ID/artifacts?private_token=$ARTIFACT_DOWNLOAD_API_TOKEN.\"}'
+    DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY"  https://hooks.slack.com/services/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'
+  only:
+    changes:
+    - frontend/*
+  script:
+    - echo $DEPLOY_CURL_COMMAND
+    - 'eval "$DEPLOY_CURL_COMMAND"'
+  needs:
+    - job: build-frontend-code-job 
+      artifacts: true
