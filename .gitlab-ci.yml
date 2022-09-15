@@ -13,12 +13,12 @@ build-backend-code-job:
   script:
     - cd backend
     - mvn package
-    - echo "BUILD_BACKEND_CI_JOB_ID=${CI_JOB_ID}" >> build_backend.env
+    - echo "BUILD_BACKEND_CI_JOB_ID=${CI_JOB_ID}" >> target/build_backend.env
   artifacts:
     paths:
       - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
     reports:
-        dotenv: build_backend.env
+        dotenv: backend/target/build_backend.env
 
 build-frontend-code-job:
   stage: build  
@@ -29,12 +29,12 @@ build-frontend-code-job:
     - cd frontend
     - npm install
     - npm run build
-    - echo "BUILD_FRONTEND_CI_JOB_ID=${CI_JOB_ID}" >> build_frontend.env
+    - echo "BUILD_FRONTEND_CI_JOB_ID=${CI_JOB_ID}" >> dist/frontend/build_frontend.env
   artifacts:
     paths:
       - frontend/dist/frontend
     reports:
-      dotenv: build_frontend.env
+      dotenv: frontend/dist/frontend/build_frontend.env
 
 slack-notification-backend:
   stage: notify
