@@ -40,6 +40,9 @@ build-frontend-code-job:
 
 sonarqube-backend-sast:
   stage: test
+  only:
+    changes:
+    - backend/*
   image: maven:3.8-openjdk-16 # тот самый docker-образ, о котором мы все узнаем в будущем
   script:
     - cd backend
@@ -58,6 +61,9 @@ sonarqube-backend-sast:
     
 sonarqube-frontend-sast:
   stage: test
+  only:
+    changes:
+    - frontend/*
   image:
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
