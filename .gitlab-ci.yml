@@ -43,10 +43,10 @@ sonarqube-backend-sast:
   image: maven:3.8-openjdk-16 # тот самый docker-образ, о котором мы все узнаем в будущем
   script:
     - cd backend
-    - echo "BUILD_BACKEND_CI_JOB_ID=${CI_JOB_ID}" >> target/build_backend.env
+    - echo "BUILD_BACKEND_CI_JOB_ID=$BUILD_BACKEND_CI_JOB_ID" >> target/build_backend.env
     - >
       mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
-      -Dsonar.projectKey=${SONAR_PROJECT_KEY}
+      -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACK}
       -Dsonar.host.url=${SONARQUBE_URL}
       -Dsonar.login=${SONAR_LOGIN}
   needs:
@@ -62,8 +62,8 @@ sonarqube-frontend-sast:
     entrypoint: [""]
   script:
     - cd frontend
-    - echo "BUILD_FRONTEND_CI_JOB_ID=${CI_JOB_ID}" >> dist/frontend/build_frontend.env
-    - sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.qualitygate.wait=true -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONAR_LOGIN}
+    - echo "BUILD_FRONTEND_CI_JOB_ID=$BUILD_FRONTEND_CI_JOB_ID" >> dist/frontend/build_frontend.env
+    - sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT_KEY_FRONT} -Dsonar.qualitygate.wait=true -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONAR_LOGIN}
   needs:
     - job: build-frontend-code-job
   artifacts:
