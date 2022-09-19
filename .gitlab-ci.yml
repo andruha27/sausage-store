@@ -1,7 +1,7 @@
 stages:
   - build
   - notify
-- test
+  - test
 include:
   - template: Security/SAST.gitlab-ci.yml 
 variables:
