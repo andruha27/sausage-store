@@ -49,6 +49,7 @@ sonarqube-backend-sast:
       -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACK}
       -Dsonar.host.url=${SONARQUBE_URL}
       -Dsonar.login=${SONAR_LOGIN_FRONT}
+      -Dsonar.projectName='09_ANDREYVOROBYEV_BACKEND'
   needs:
     - job: build-backend-code-job
   artifacts:
@@ -63,7 +64,7 @@ sonarqube-frontend-sast:
   script:
     - cd frontend
     - echo "BUILD_FRONTEND_CI_JOB_ID=$BUILD_FRONTEND_CI_JOB_ID" >> dist/frontend/build_frontend.env
-    - sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT_KEY_FRONT} -Dsonar.qualitygate.wait=true -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONAR_LOGIN_FRONT}
+    - sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT_KEY_FRONT} -Dsonar.qualitygate.wait=true -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONAR_LOGIN_FRONT} -Dsonar.projectName='09_ANDREYVOROBYEV_FRONTEND'
   needs:
     - job: build-frontend-code-job
   artifacts:
