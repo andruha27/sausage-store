@@ -1,7 +1,9 @@
 stages:
   - build
   - notify
-
+- test
+include:
+  - template: Security/SAST.gitlab-ci.yml 
 variables:
     ARTIFACT_DOWNLOAD_API_TOKEN: 'uTAVSK6FwjXyVt2UK64x'
 
