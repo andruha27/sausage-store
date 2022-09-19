@@ -48,7 +48,7 @@ sonarqube-backend-sast:
       mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
       -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACK}
       -Dsonar.host.url=${SONARQUBE_URL}
-      -Dsonar.login=${SONAR_LOGIN}
+      -Dsonar.login=${SONAR_LOGIN_FRONT}
   needs:
     - job: build-backend-code-job
   artifacts:
@@ -63,7 +63,7 @@ sonarqube-frontend-sast:
   script:
     - cd frontend
     - echo "BUILD_FRONTEND_CI_JOB_ID=$BUILD_FRONTEND_CI_JOB_ID" >> dist/frontend/build_frontend.env
-    - sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT_KEY_FRONT} -Dsonar.qualitygate.wait=true -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONAR_LOGIN}
+    - sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT_KEY_FRONT} -Dsonar.qualitygate.wait=true -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONAR_LOGIN_FRONT}
   needs:
     - job: build-frontend-code-job
   artifacts:
