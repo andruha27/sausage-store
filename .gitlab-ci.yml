@@ -1,11 +1,14 @@
 stages:
   - build
   - test
+  - release
   - notify
 include:
   - template: Security/SAST.gitlab-ci.yml 
 variables:
     ARTIFACT_DOWNLOAD_API_TOKEN: 'uTAVSK6FwjXyVt2UK64x'
+    VERSION: 1.0.${CI_PIPELINE_ID}
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
 
 build-backend-code-job:
   stage: build  
@@ -14,11 +17,12 @@ build-backend-code-job:
     - backend/*
   script:
     - cd backend
-    - mvn package
+    - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
     - echo "BUILD_BACKEND_CI_JOB_ID=${CI_JOB_ID}" >> target/build_backend.env
   artifacts:
     paths:
-      - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
+      - backend/target/sausage-store-${VERSION}.jar
+      - ${CI_PROJECT_DIR}/.m2/ 
     reports:
         dotenv: backend/target/build_backend.env
 
@@ -106,3 +110,31 @@ slack-notification-frontend:
   needs:
     - job: sonarqube-frontend-sast 
       artifacts: true
+
+upload-backend-release:
+  stage: release
+  only:
+    changes:
+      - backend/*
+  needs:
+    - build-backend-code-job
+  script:
+    - cd backend
+    - mvn -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -s settings.xml -Dversion.application=${VERSION} -DskipTests deploy 
+
+upload-frontend-release:
+  stage: release
+  only:
+    changes:
+    - frontend/*
+  needs:
+    - build-frontend-code-job
+  script:
+    - cd frontend/dist
+    - tar czvf sausage-store-${VERSION}.tar.gz frontend
+    - curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL}/sausage-store-vorobyev-andrey-frontend/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz 
+    
+cache:
+  paths:
+    - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
+    - frontend/dist/frontend # для хранения фронта 
