@@ -69,7 +69,7 @@ sonarqube-frontend-sast:
 slack-notification-backend:
   stage: notify
   variables:
-    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал бек https://gitlab.praktikum-services.ru/api/v4/projects/1255/jobs/$BUILD_BACKEND_CI_JOB_ID/artifacts?private_token=$ARTIFACT_DOWNLOAD_API_TOKEN.\"}'
+    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал бек https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-backend/com/yandex/practicum/devops/sausage-store/$VERSION/sausage-store-$VERSION.jar.\"}'
     DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY" https://hooks.slack.com/services/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'
   only:
     changes:
@@ -84,7 +84,7 @@ slack-notification-backend:
 slack-notification-frontend:
   stage: notify
   variables: 
-    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал фронт https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-frontend/sausage-store/-$VERSION/sausage-store-$VERSION.tar.gz.\"}'
+    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал фронт https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-frontend/sausage-store/$VERSION/sausage-store-$VERSION.tar.gz.\"}'
     DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY"  https://hooks.slack.com/services/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'
   only:
     changes:
