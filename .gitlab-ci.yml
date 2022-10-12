@@ -69,7 +69,7 @@ sonarqube-frontend-sast:
 slack-notification-backend:
   stage: notify
   variables:
-    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал бек https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-backend/com/yandex/practicum/devops/sausage-store/$VERSION/sausage-store-$VERSION.jar.\"}'
+    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"Вышла новая версия backend сосисочной — ${VERSION}. Скачать backend можно по ссылке — https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-backend/com/yandex/practicum/devops/sausage-store/$VERSION/sausage-store-$VERSION.jar .\"}'
     DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY" https://hooks.slack.com/services/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'
   only:
     changes:
@@ -78,13 +78,12 @@ slack-notification-backend:
     - echo $DEPLOY_CURL_COMMAND
     - 'eval "$DEPLOY_CURL_COMMAND"'
   needs:
-    - job: sonarqube-backend-sast
-      artifacts: true
+    - job: upload-backend-release
 
 slack-notification-frontend:
   stage: notify
   variables: 
-    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"${GITLAB_USER_NAME} собрал фронт https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-frontend/sausage-store/$VERSION/sausage-store-$VERSION.tar.gz.\"}'
+    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"Вышла новая версия frontend сосисочной — ${VERSION}. Скачать frontend можно по ссылке — https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-frontend/sausage-store/$VERSION/sausage-store-$VERSION.tar.gz .\"}'
     DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY"  https://hooks.slack.com/services/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'
   only:
     changes:
@@ -93,8 +92,7 @@ slack-notification-frontend:
     - echo $DEPLOY_CURL_COMMAND
     - 'eval "$DEPLOY_CURL_COMMAND"'
   needs:
-    - job: sonarqube-frontend-sast 
-      artifacts: true
+    - job: upload-frontend-release
 
 upload-backend-release:
   stage: release
@@ -102,7 +100,7 @@ upload-backend-release:
     changes:
       - backend/*
   needs:
-    - build-backend-code-job
+    - sonarqube-backend-sast
   script:
     - cd backend
     - mvn -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -s settings.xml -Dversion.application=${VERSION} -DskipTests deploy 
@@ -113,7 +111,7 @@ upload-frontend-release:
     changes:
     - frontend/*
   needs:
-    - build-frontend-code-job
+    - sonarqube-frontend-sast
   script:
     - cd frontend/dist
     - tar czvf sausage-store-${VERSION}.tar.gz frontend
