@@ -1,0 +1,16 @@
+[Unit]
+Description=Sausage store
+After=remote-fs.target nss-user-lookup.target
+
+[Service]
+Environment="REPORT_PATH=/var/www-data/htdocs/"
+Environment="LOG_PATH=/"
+ExecStart= /usr/lib/jvm/java-16-openjdk-amd64/bin/java -Dmyserver.basePath='/home/jarservice/' -Dmyserver.bindAddr='127.0.0.1' -Dmyserver.bindPort='8080' -Dmyserver.hostName='Sausage-store' -jar /var/jarservice/sausage-store.jar
+IgnoreSIGPIPE=false
+Restart=always
+StandardOutput=file:/logs/out.log
+StandardError=file:/logs/out.log
+User=jarservice
+SuccessExitStatus=143
+[Install]
+WantedBy=multi-user.target
