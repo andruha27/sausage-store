@@ -2,6 +2,7 @@ stages:
   - build
   - test
   - release
+  - deploy
   - notify
 include:
   - template: Security/SAST.gitlab-ci.yml 
@@ -81,7 +82,7 @@ slack-notification-frontend:
     - echo $DEPLOY_CURL_COMMAND
     - 'eval "$DEPLOY_CURL_COMMAND"'
   needs:
-    - job: upload-frontend-release
+    - job: deploy
 
 cache:
   paths:
