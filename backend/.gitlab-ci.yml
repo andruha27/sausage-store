@@ -53,7 +53,7 @@ slack-notification-backend:
     - echo $DEPLOY_CURL_COMMAND
     - 'eval "$DEPLOY_CURL_COMMAND"'
   needs:
-    - job: deploy
+    - job: deploy-backend
 
 upload-backend-release:
   stage: release

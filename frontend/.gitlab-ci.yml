@@ -84,7 +84,7 @@ slack-notification-frontend:
     - echo $DEPLOY_CURL_COMMAND
     - 'eval "$DEPLOY_CURL_COMMAND"'
   needs:
-    - job: deploy
+    - job: deploy-frontend
 
 cache:
   key: frontend
