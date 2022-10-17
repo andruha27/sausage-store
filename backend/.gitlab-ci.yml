@@ -83,7 +83,7 @@ deploy:
     - scp ./backend/sausage-store.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store.service
     - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash -s " < ./backend/deploy.sh 
   environment:
-    name: production
+    name: production_backend
   needs:
     - job: upload-backend-release
      
