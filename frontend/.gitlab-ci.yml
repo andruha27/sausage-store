@@ -51,7 +51,7 @@ upload-frontend-release:
     - tar czvf sausage-store-${VERSION}.tar.gz frontend
     - curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL}/sausage-store-vorobyev-andrey-frontend/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz 
     
-deploy:
+deploy-frontend:
   stage: deploy
   before_script:
     #устанавливаем ssh-agent для удобства аутентификации по ssh

@@ -67,7 +67,7 @@ upload-backend-release:
     - mvn -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -s settings.xml -Dversion.application=${VERSION} -DskipTests deploy 
 
 
-deploy:
+deploy-backend:
   stage: deploy
   before_script:
     #устанавливаем ssh-agent для удобства аутентификации по ssh
