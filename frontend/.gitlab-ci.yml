@@ -15,7 +15,7 @@ build-frontend-code-job:
   stage: build  
   only:
     changes:
-    - frontend/*
+    - frontend/**/*
   script:        
     - cd frontend
     - npm install
@@ -28,7 +28,7 @@ sonarqube-frontend-sast:
   stage: test
   only:
     changes:
-    - frontend/*
+    - frontend/**/*
   image:
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -44,7 +44,7 @@ upload-frontend-release:
   stage: release
   only:
     changes:
-    - frontend/*
+    - frontend/**/*
   needs:
     - sonarqube-frontend-sast
   script:
@@ -52,7 +52,7 @@ upload-frontend-release:
     - tar czvf sausage-store-${VERSION}.tar.gz frontend
     - curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL}/sausage-store-vorobyev-andrey-frontend/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz 
     
-deploy:
+deploy-frontend:
   stage: deploy
   before_script:
     #устанавливаем ssh-agent для удобства аутентификации по ssh
@@ -67,6 +67,8 @@ deploy:
   script:
     - scp ./frontend/sausage-store.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-frontend.service
     - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash -s " < ./frontend/deploy.sh 
+  environment:
+    name: production
   when: manual
   needs:
     - job: upload-frontend-release
@@ -78,13 +80,14 @@ slack-notification-frontend:
     DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY"  https://hooks.slack.com/services/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'
   only:
     changes:
-    - frontend/*
+    - frontend/**/*
   script:
     - echo $DEPLOY_CURL_COMMAND
     - 'eval "$DEPLOY_CURL_COMMAND"'
   needs:
-    - job: deploy
+    - job: deploy-frontend
 
 cache:
+  key: frontend
   paths:
     - frontend/dist/frontend # для хранения фронта 

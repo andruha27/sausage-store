@@ -15,7 +15,7 @@ build-backend-code-job:
   stage: build  
   only:
     changes:
-    - backend/*
+    - backend/**/*
   script:
     - cd backend
     - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
@@ -28,7 +28,7 @@ sonarqube-backend-sast:
   stage: test
   only:
     changes:
-    - backend/*
+    - backend/**/*
   image: maven:3.8-openjdk-16 # тот самый docker-образ, о котором мы все узнаем в будущем
   script:
     - cd backend
@@ -48,18 +48,18 @@ slack-notification-backend:
     DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY" https://hooks.slack.com/services/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'
   only:
     changes:
-    - backend/*
+    - backend/**/*
   script:
     - echo $DEPLOY_CURL_COMMAND
     - 'eval "$DEPLOY_CURL_COMMAND"'
   needs:
-    - job: deploy
+    - job: deploy-backend
 
 upload-backend-release:
   stage: release
   only:
     changes:
-      - backend/*
+      - backend/**/*
   needs:
     - sonarqube-backend-sast
   script:
@@ -67,7 +67,7 @@ upload-backend-release:
     - mvn -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -s settings.xml -Dversion.application=${VERSION} -DskipTests deploy 
 
 
-deploy:
+deploy-backend:
   stage: deploy
   before_script:
     #устанавливаем ssh-agent для удобства аутентификации по ssh
@@ -82,10 +82,12 @@ deploy:
   script:
     - scp ./backend/sausage-store.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store.service
     - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash -s " < ./backend/deploy.sh 
-
+  environment:
+    name: production 
   needs:
     - job: upload-backend-release
      
 cache:
+  key: backend
   paths:
     - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
