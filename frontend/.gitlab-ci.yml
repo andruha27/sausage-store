@@ -14,7 +14,7 @@ build-frontend-code-job:
   stage: build  
   only:
     changes:
-    - frontend/*
+    - frontend/**/*
   script:        
     - cd frontend
     - npm install
@@ -27,7 +27,7 @@ sonarqube-frontend-sast:
   stage: test
   only:
     changes:
-    - frontend/*
+    - frontend/**/*
   image:
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -43,7 +43,7 @@ upload-frontend-release:
   stage: release
   only:
     changes:
-    - frontend/*
+    - frontend/**/*
   needs:
     - sonarqube-frontend-sast
   script:
@@ -79,7 +79,7 @@ slack-notification-frontend:
     DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY"  https://hooks.slack.com/services/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'
   only:
     changes:
-    - frontend/*
+    - frontend/**/*
   script:
     - echo $DEPLOY_CURL_COMMAND
     - 'eval "$DEPLOY_CURL_COMMAND"'
