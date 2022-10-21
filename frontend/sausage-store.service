@@ -7,8 +7,8 @@ ExecStart=/usr/bin/sudo /usr/bin/http-server /var/www-data/dist/frontend/ -p 80 
 IgnoreSIGPIPE=false
 KillMode=process
 Restart=on-failure
-StandardOutput=file:/logs/out-front.log
-StandardError=/logs/out-front.log
+StandardOutput=file:/opt/log/sausage-store-frontend.log
+StandardError=/opt/log/sausage-store-frontend.log
 User=front-user
 [Install]
 WantedBy=multi-user.target
