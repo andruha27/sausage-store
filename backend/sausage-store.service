@@ -5,7 +5,7 @@ After=remote-fs.target nss-user-lookup.target
 [Service]
 Environment="REPORT_PATH=/var/www-data/htdocs/"
 Environment="LOG_PATH=/"
-ExecStart= /usr/lib/jvm/java-16-openjdk-amd64/bin/java -Dmyserver.basePath='/var/jarservice/' -Dmyserver.bindAddr='127.0.0.1' -Dmyserver.bindPort='8080' -Dmyserver.hostName='Sausage-store' -Dspring.datasource.url=jdbc:postgresql://rc1b-u3t28kqvudl2zhqz.mdb.yandexcloud.net:6432/aperman -Dspring.datasource.username=aperman -Dspring.datasource.password=Testusr1234 -Dspring.flyway.enabled=false -jar /var/jarservice/sausage-store.jar
+ExecStart= /usr/lib/jvm/java-16-openjdk-amd64/bin/java -Dmyserver.basePath='/var/jarservice/' -Dmyserver.bindAddr='127.0.0.1' -Dmyserver.bindPort='8080' -Dmyserver.hostName='Sausage-store' -Dspring.datasource.url=jdbc:postgresql://rc1b-u3t28kqvudl2zhqz.mdb.yandexcloud.net:6432/aperman -Dspring.datasource.username=aperman -Dspring.datasource.password=Testusr1234 -jar /var/jarservice/sausage-store.jar
 IgnoreSIGPIPE=false
 Restart=always
 StandardOutput=file:/opt/log/sausage-store-backend.log
