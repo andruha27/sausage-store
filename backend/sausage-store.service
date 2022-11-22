@@ -5,7 +5,7 @@ After=remote-fs.target nss-user-lookup.target
 [Service]
 Environment="REPORT_PATH=/var/www-data/htdocs/"
 Environment="LOG_PATH=/"
-ExecStart= /usr/lib/jvm/java-16-openjdk-amd64/bin/java -Dmyserver.basePath='/var/jarservice/' -Dmyserver.bindAddr='127.0.0.1' -Dmyserver.bindPort='8080' -Dmyserver.hostName='Sausage-store' -Dspring.datasource.url=jdbc:postgresql://${PSQL_HOST}:${PSQL_PORT}/${PSQL_DBNAME} -Dspring.datasource.username=${PSQL_USER} -Dspring.datasource.password=${PSQL_PASSWORD} -Djavax.net.ssl.trustStore=/home/jarservice/.mongodb/YATrustStore -Djavax.net.ssl.trustStorePassword=${MONGO_TRUST_STORE_PASSWORD} -Dspring.data.mongodb.uri=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true&replicaSet=rs01 -jar /var/jarservice/sausage-store.jar
+ExecStart= /usr/lib/jvm/java-16-openjdk-amd64/bin/java -Dmyserver.basePath='/var/jarservice/' -Dmyserver.bindAddr='127.0.0.1' -Dmyserver.bindPort='8080' -Dmyserver.hostName='Sausage-store' -Dspring.datasource.url=jdbc:postgresql://${PSQL_HOST}:${PSQL_PORT}/${PSQL_DBNAME} -Dspring.datasource.username=${PSQL_USER} -Dspring.datasource.password=${PSQL_PASSWORD} -Djavax.net.ssl.trustStore=/var/jarservice/.mongodb/YATrustStore -Djavax.net.ssl.trustStorePassword=${MONGO_TRUST_STORE_PASSWORD} -Dspring.data.mongodb.uri=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true&replicaSet=rs01 -jar /var/jarservice/sausage-store.jar
 IgnoreSIGPIPE=false
 Restart=always
 StandardOutput=file:/opt/log/sausage-store-backend.log
