@@ -15,6 +15,22 @@ variables:
     JAVA_OPTS: -XX:MaxRAMPercentage=90 # для того, чтобы Maven не съел всю свободную оперативку
 
 build-backend-code-job:
+  stage: build  
+  only:
+    changes:
+    - backend/**/*
+  script:
+    - cd backend
+    - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION} -Dspring.flyway.enabled=false
+  artifacts:
+    paths:
+      - backend/target/sausage-store-${VERSION}.jar
+      - ${CI_PROJECT_DIR}/.m2/
+
+build-backend-container:
+  only:
+    changes:
+    - backend/**/*
   stage: build
   image: docker:20.10.12-dind-rootless
   before_script:
@@ -29,6 +45,8 @@ build-backend-code-job:
       --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
       .
     - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+  needs:
+    - build-backend-code-job
 
 sonarqube-backend-sast:
   stage: test
