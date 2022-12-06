@@ -6,6 +6,7 @@ stages:
   - notify
 include:
   - template: Security/SAST.gitlab-ci.yml
+include:
   - project: 'templates/ci'
     file: 'DockerInDockerTemplate.yml'
 variables:
