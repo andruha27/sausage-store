@@ -110,19 +110,19 @@ deploy-backend:
   needs:
     - job: upload-backend-latest
 
-slack-notification-backend:
-  stage: notify
-  variables:
-    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"Вышла новая версия backend сосисочной — ${VERSION}. Скачать backend можно по ссылке — https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-backend/com/yandex/practicum/devops/sausage-store/$VERSION/sausage-store-$VERSION.jar .\"}'
-    DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY" https://hooks.slack.com/services/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'
-  only:
-    changes:
-    - backend/**/*
-  script:
-    - echo $DEPLOY_CURL_COMMAND
-    - 'eval "$DEPLOY_CURL_COMMAND"'
-  needs:
-    - job: deploy-backend
+# slack-notification-backend:
+  # stage: notify
+  # variables:
+    # DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"Вышла новая версия backend сосисочной — ${VERSION}. Скачать backend можно по ссылке — https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-backend/com/yandex/practicum/devops/sausage-store/$VERSION/sausage-store-$VERSION.jar .\"}'
+    # DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY" https://hooks.slack.com/services/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'
+  # only:
+    # changes:
+    # - backend/**/*
+  # script:
+    # - echo $DEPLOY_CURL_COMMAND
+    # - 'eval "$DEPLOY_CURL_COMMAND"'
+  # needs:
+    # - job: deploy-backend
     
 cache:
   key: backend
