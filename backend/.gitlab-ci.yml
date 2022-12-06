@@ -62,7 +62,6 @@ upload-backend-latest:
   needs:
     - sonarqube-backend-sast
 
-
 deploy-backend:
   stage: deploy
   image: alpine:3.15.0
@@ -88,6 +87,8 @@ deploy-backend:
        export "SPRING_DATASOURCE_PASSWORD=${PSQL_PASSWORD}";
        export "SPRING_DATA_MONGODB_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true&replicaSet=rs01";
       /bin/bash -s " < ./backend/backend_deploy.sh 
+  environment:
+    name: production
   needs:
     - job: upload-backend-latest
 
