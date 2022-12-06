@@ -1,11 +1,11 @@
 stages:
   - build
-  - test
+  # - test
   - release
   - deploy
   - notify
 include:
-  - template: Security/SAST.gitlab-ci.yml
+  # - template: Security/SAST.gitlab-ci.yml
   - project: templates/ci
     file: DockerInDockerTemplate.yml
 variables:
@@ -13,18 +13,18 @@ variables:
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
     JAVA_OPTS: -XX:MaxRAMPercentage=90 # для того, чтобы Maven не съел всю свободную оперативку
 
-build-backend-code-job:
-  stage: build  
-  only:
-    changes:
-    - backend/**/*
-  script:
-    - cd backend
-    - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION} -Dspring.flyway.enabled=false
-  artifacts:
-    paths:
-      - backend/target/sausage-store-${VERSION}.jar
-      - ${CI_PROJECT_DIR}/.m2/
+# build-backend-code-job:
+  # stage: build  
+  # only:
+    # changes:
+    # - backend/**/*
+  # script:
+    # - cd backend
+    # - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION} -Dspring.flyway.enabled=false
+  # artifacts:
+    # paths:
+      # - backend/target/sausage-store-${VERSION}.jar
+      # - ${CI_PROJECT_DIR}/.m2/
 
 build-backend-container:
   only:
@@ -44,25 +44,25 @@ build-backend-container:
       --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
       .
     - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
-  needs:
-    - build-backend-code-job
+  # needs:
+    # - build-backend-code-job
 
-sonarqube-backend-sast:
-  stage: test
-  only:
-    changes:
-    - backend/**/*
-  image: maven:3.8-openjdk-16 # тот самый docker-образ, о котором мы все узнаем в будущем
-  script:
-    - cd backend
-    - >
-      mvn -Dspring.flyway.enabled=false verify sonar:sonar -Dsonar.qualitygate.wait=true
-      -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACK}
-      -Dsonar.host.url=${SONARQUBE_URL}
-      -Dsonar.login=${SONAR_LOGIN_FRONT}
-      -Dsonar.projectName='09_ANDREYVOROBYEV_BACKEND'
-  needs:
-    - job: build-backend-container
+# sonarqube-backend-sast:
+  # stage: test
+  # only:
+    # changes:
+    # - backend/**/*
+  # image: maven:3.8-openjdk-16 # тот самый docker-образ, о котором мы все узнаем в будущем
+  # script:
+    # - cd backend
+    # - >
+      # mvn -Dspring.flyway.enabled=false verify sonar:sonar -Dsonar.qualitygate.wait=true
+      # -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACK}
+      # -Dsonar.host.url=${SONARQUBE_URL}
+      # -Dsonar.login=${SONAR_LOGIN_FRONT}
+      # -Dsonar.projectName='09_ANDREYVOROBYEV_BACKEND'
+  # needs:
+    # - job: build-backend-container
 
 upload-backend-latest:
   variables:
@@ -78,7 +78,8 @@ upload-backend-latest:
     - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
     - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
   needs:
-    - job: sonarqube-backend-sast
+    # - job: sonarqube-backend-sast
+    - job: build-backend-container
 
 deploy-backend:
   stage: deploy
