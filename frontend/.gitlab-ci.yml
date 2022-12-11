@@ -68,8 +68,6 @@ deploy-frontend:
     - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
       /bin/bash -s " < ./frontend/frontend_deploy.sh 
-  environment:
-    name: production
   needs:
     - job: upload-frontend-latest
 

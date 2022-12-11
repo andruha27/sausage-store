@@ -78,8 +78,6 @@ deploy-backend:
        export "MONGO_PASSWORD=${MONGO_PASSWORD}"; 
        export "MONGO_HOST=${MONGO_HOST}"; 
       /bin/bash -s " < ./backend/backend_deploy.sh 
-  environment:
-    name: production
   needs:
     - job: upload-backend-latest
 
