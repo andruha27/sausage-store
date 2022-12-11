@@ -99,7 +99,6 @@ deploy-backend:
        export "SPRING_DATASOURCE_USERNAME=${PSQL_USER}";
        export "SPRING_DATASOURCE_PASSWORD=${PSQL_PASSWORD}";
        export "SPRING_DATA_MONGODB_URI=${MONGO_DATA}";
-       export "REPORT_PATH=/var/log";
       /bin/bash -s " < ./backend/backend_deploy.sh 
   environment:
     name: production
