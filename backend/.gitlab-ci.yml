@@ -26,7 +26,7 @@ variables:
     # paths:
       # - backend/target/sausage-store-${VERSION}.jar
       # - ${CI_PROJECT_DIR}/.m2/
-
+     
 build-backend-container:
   only:
     changes:
@@ -48,6 +48,12 @@ build-backend-container:
   # needs:
     # - build-backend-code-job
 
+container_scanning:
+  variables:
+    CS_IMAGE: $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+  needs:
+    - build-backend-container
+    
 # sonarqube-backend-sast:
   # stage: test
   # only:
@@ -80,7 +86,8 @@ upload-backend-latest:
     - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
   needs:
     # - job: sonarqube-backend-sast
-    - job: build-backend-container
+    # - job: build-backend-container
+    - job: container_scanning
 
 deploy-backend:
   stage: deploy
