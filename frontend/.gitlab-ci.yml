@@ -91,7 +91,7 @@ deploy-frontend:
   script:
     - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
-      /bin/bash -s " < ./backend/frontend_deploy.sh 
+      /bin/bash -s " < ./frontend/frontend_deploy.sh 
   environment:
     name: production
   needs:
