@@ -9,7 +9,7 @@ EOF
 
 cat .env
 
-docker network create -d --force bridge sausage_network || true
+docker network create -d bridge sausage_network || true
 docker pull gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-backend:latest
 docker stop sausage-backend || true
 docker rm sausage-backend || true
