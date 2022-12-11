@@ -1,6 +1,6 @@
 stages:
   - build
-  # - test
+  - test
   - release
   - deploy
   - notify
