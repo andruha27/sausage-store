@@ -1,3 +1,4 @@
 backend/deploy.sh eol=lf
 frontend/deploy.sh eol=lf
 backend/backend_deploy.sh eol=lf
+backend/frontend_deploy.sh eol=lf

@@ -23,6 +23,27 @@ build-frontend-code-job:
   artifacts:
     paths:
       - frontend/dist/frontend
+      
+build-frontend-container:
+  only:
+    changes:
+    - frontend/**/*
+  stage: build
+  image: docker:20.10.12-dind-rootless
+  before_script:
+    - until docker info; do sleep 1; done
+    # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - cd backend
+    - >
+      docker build
+      --build-arg VERSION=$VERSION
+      --tag $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA
+  needs:
+    - job: build-frontend-code-job
     
 sonarqube-frontend-sast:
   stage: test
@@ -36,42 +57,42 @@ sonarqube-frontend-sast:
     - cd frontend
     - sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT_KEY_FRONT} -Dsonar.qualitygate.wait=true -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONAR_LOGIN_FRONT} -Dsonar.projectName='09_ANDREYVOROBYEV_FRONTEND'
   needs:
-    - job: build-frontend-code-job
+    - job: build-frontend-container
 
-
-
-upload-frontend-release:
+upload-frontend-latest:
+  variables:
+    GIT_STRATEGY: none
+  image: docker:20.10.12-dind-rootless
   stage: release
-  only:
-    changes:
-    - frontend/**/*
-  needs:
-    - sonarqube-frontend-sast
+  before_script:
+    - until docker info; do sleep 1; done
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cd frontend/dist
-    - tar czvf sausage-store-${VERSION}.tar.gz frontend
-    - curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL}/sausage-store-vorobyev-andrey-frontend/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz 
+    - docker pull $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE/sausage-frontend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-frontend:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:latest
+  needs:
+    - job: sonarqube-frontend-sast
     
 deploy-frontend:
   stage: deploy
+  image: alpine:3.15.0
   before_script:
-    #устанавливаем ssh-agent для удобства аутентификации по ssh
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apk add openssh-client bash
     - eval $(ssh-agent -s)
-    #сохраняем сгенеренный ранее приватный ключ для раннера
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 600 ~/.ssh
+    - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - scp ./frontend/sausage-store.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-frontend.service
-    - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash -s " < ./frontend/deploy.sh 
+    - ssh ${DEV_USER}@${DEV_HOST}
+      "export "VERSION=${VERSION}";
+      /bin/bash -s " < ./backend/frontend_deploy.sh 
   environment:
     name: production
-  when: manual
   needs:
-    - job: upload-frontend-release
+    - job: upload-frontend-latest
 
 slack-notification-frontend:
   stage: notify
