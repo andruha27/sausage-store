@@ -1,11 +1,12 @@
 stages:
   - build
-  # - test
+  - test
   - release
   - deploy
   - notify
 include:
   #- template: Security/SAST.gitlab-ci.yml
+  - template: Container-Scanning.gitlab-ci.yml
   - project: templates/ci
     file: DockerInDockerTemplate.yml
 variables:
