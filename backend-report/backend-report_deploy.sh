@@ -1,7 +1,7 @@
 #!/bin/bash
 set +e
 cat > .backend.report.env <<EOF
-DB=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true&replicaSet=rs01&tlsAllowInvalidCertificates=true&tlsCAFile=~/.mongodb/root.crt
+DB=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true&replicaSet=rs01&tlsAllowInvalidCertificates=true&tlsCAFile=YandexInternalRootCA.crt
 PORT=8080
 EOF
 

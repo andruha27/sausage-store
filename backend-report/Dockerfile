@@ -14,7 +14,8 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN curl https://storage.yandexcloud.net/cloud-certs/CA.pem -o YandexInternalRootCA.crt \
+    && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 
 ######## Start a new stage from scratch #######
@@ -24,7 +25,7 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-RUN mkdir --parents ~/.mongodb && wget "https://storage.yandexcloud.net/cloud-certs/CA.pem" --output-document ~/.mongodb/root.crt && chmod 0644 ~/.mongodb/root.crt
+COPY --from=builder /app/YandexInternalRootCA.crt .
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
