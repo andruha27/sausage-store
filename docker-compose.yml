@@ -20,8 +20,6 @@ services:
   frontend:
     image: gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-frontend:latest
     container_name: sausage-frontend
-    env_file:
-      - .env.frontend
     ports:
       - "80:80"
     networks:

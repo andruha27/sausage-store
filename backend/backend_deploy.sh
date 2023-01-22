@@ -13,4 +13,4 @@ docker stop sausage-backend || true
 docker rm sausage-backend || true
 
 set -e
-docker-compose up -d --env-file .backend.env --force-recreate backend
+docker-compose --env-file .backend.env up -d backend --force-recreate
