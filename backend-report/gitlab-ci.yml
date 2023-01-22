@@ -1,18 +1,17 @@
-stages:
-  - build
-  - test
-  - release
-  - deploy
-include:
-  - template: Container-Scanning.gitlab-ci.yml
-  - project: templates/ci
-    file: DockerInDockerTemplate.yml
 variables:
-    VERSION: 1.0.${CI_PIPELINE_ID}
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
-    JAVA_OPTS: -XX:MaxRAMPercentage=90 # для того, чтобы Maven не съел всю свободную оперативку
-     
-build-backend-container:
+   VERSION: 1.0.${CI_PIPELINE_ID}
+
+include:
+  - project: 'templates/ci'
+    file: 'DockerInDockerTemplate.yml'
+
+stages:
+   - build
+   - test
+   - release
+   - deploy
+
+build-report-job:
   only:
     changes:
     - backend/**/*
@@ -23,21 +22,21 @@ build-backend-container:
     # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cd backend
+    - cd backend-report
     - >
       docker build
       --build-arg VERSION=$VERSION
-      --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+      --tag $CI_REGISTRY_IMAGE/sausage-report:$CI_COMMIT_SHA
       .
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE/sausage-report:$CI_COMMIT_SHA
 
 container_scanning:
   variables:
-    CS_IMAGE: $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    CS_IMAGE: $CI_REGISTRY_IMAGE/sausage-report:$CI_COMMIT_SHA
   needs:
-    - build-backend-container
+    - build-report-container
 
-upload-backend-latest:
+upload-report-latest:
   variables:
     GIT_STRATEGY: none
   image: docker:20.10.12-dind-rootless
@@ -46,14 +45,14 @@ upload-backend-latest:
     - until docker info; do sleep 1; done
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker pull $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    - docker pull $CI_REGISTRY_IMAGE/sausage-report:$CI_COMMIT_SHA
     # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
-    - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
+    - docker tag $CI_REGISTRY_IMAGE/sausage-report:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-report:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-report:latest
   needs:
     - job: container_scanning
 
-deploy-backend:
+deploy-report:
   stage: deploy
   image: vault:1.11.3
   before_script:
@@ -69,20 +68,10 @@ deploy-backend:
     - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
     - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
-       export "PSQL_HOST=${PSQL_HOST}";
-       export "PSQL_PORT=${PSQL_PORT}";
-       export "PSQL_DBNAME=${PSQL_DBNAME}";
-       export "SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store)";
-       export "SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store)";
        export "MONGO_DATABASE=${MONGO_DATABASE}"; 
        export "MONGO_USER=$(vault kv get -field=spring.data.mongodb.username secret/sausage-store)"; 
        export "MONGO_PASSWORD=$(vault kv get -field=spring.data.mongodb.password secret/sausage-store)"; 
        export "MONGO_HOST=${MONGO_HOST}"; 
-      /bin/bash -s " < ./backend/backend_deploy.sh 
+      /bin/bash -s " < ./backend-report/backend-report_deploy.sh 
   needs:
-    - job: upload-backend-latest
-    
-cache:
-  key: backend
-  paths:
-    - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
+    - job: upload-report-latest

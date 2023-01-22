@@ -65,25 +65,12 @@ deploy-frontend:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
+    - scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/home/${GL_DEV_USER}/docker-compose.yml
     - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
       /bin/bash -s " < ./frontend/frontend_deploy.sh 
   needs:
     - job: upload-frontend-latest
-
-slack-notification-frontend:
-  stage: notify
-  variables: 
-    DEPLOY_CURL_COMMAND_BODY: '{\"text\":\"Вышла новая версия frontend сосисочной — ${VERSION}. Скачать frontend можно по ссылке — https://nexus.praktikum-services.ru/repository/sausage-store-vorobyev-andrey-frontend/sausage-store/$VERSION/sausage-store-$VERSION.tar.gz .\"}'
-    DEPLOY_CURL_COMMAND: 'curl -X POST -H "Content-type: application/json" --data "$DEPLOY_CURL_COMMAND_BODY"  https://hooks.slack.com/services/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'
-  only:
-    changes:
-    - frontend/**/*
-  script:
-    - echo $DEPLOY_CURL_COMMAND
-    - 'eval "$DEPLOY_CURL_COMMAND"'
-  needs:
-    - job: deploy-frontend
 
 cache:
   key: frontend
