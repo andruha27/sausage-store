@@ -26,4 +26,5 @@ services:
       - sausage-store
 
 networks:
-  sausage-store:
+  sausage_network:
+    driver: bridge
