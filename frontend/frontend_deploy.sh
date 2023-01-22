@@ -7,4 +7,4 @@ docker pull gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-
 docker stop sausage-frontend || true
 docker rm sausage-frontend || true
 set -e
-docker-compose up -d frontend --force-recreate
+docker-compose up -d frontend
