@@ -11,4 +11,4 @@ docker stop sausage-backend-report || true
 docker rm sausage-backend-report || true
 
 set -e
-docker-compose up -d --env-file .backend.report.env --force-recreate sausage-backend-report
+docker-compose up -d --env-file .backend.report.env --force-recreate backend-report
