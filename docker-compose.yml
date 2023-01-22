@@ -7,7 +7,7 @@ services:
     env_file:
       - .backend.env
     networks:
-      - sausage-store
+      - sausage_network
       
   backend-report:
     image: gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-report:latest
@@ -15,7 +15,7 @@ services:
     env_file:
       - .backend.report.env
     networks:
-      - sausage-store
+      - sausage_network
 
   frontend:
     image: gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-frontend:latest
@@ -23,7 +23,7 @@ services:
     ports:
       - "80:80"
     networks:
-      - sausage-store
+      - sausage_network
 
 networks:
   sausage_network:
