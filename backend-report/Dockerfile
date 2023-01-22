@@ -4,8 +4,6 @@ FROM golang:latest as builder
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
-RUN mkdir --parents ~/.mongodb && wget "https://storage.yandexcloud.net/cloud-certs/CA.pem" --output-document ~/.mongodb/root.crt && chmod 0644 ~/.mongodb/root.crt
-
 # Copy go mod and sum files
 COPY go.mod go.sum ./
 
@@ -25,6 +23,8 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
+
+RUN mkdir --parents ~/.mongodb && wget "https://storage.yandexcloud.net/cloud-certs/CA.pem" --output-document ~/.mongodb/root.crt && chmod 0644 ~/.mongodb/root.crt
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
