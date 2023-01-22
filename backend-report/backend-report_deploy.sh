@@ -6,7 +6,7 @@ PORT=8080
 EOF
 
 docker network create -d bridge sausage_network || true
-docker pull gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-backend-report:latest
+docker pull gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-report:latest
 docker stop sausage-backend-report || true
 docker rm sausage-backend-report || true
 
