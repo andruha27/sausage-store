@@ -1,4 +1,4 @@
-FROM node:16 as builder
+FROM gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/node:16 as builder
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci

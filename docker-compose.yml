@@ -30,6 +30,6 @@ services:
     networks:
       - sausage_network
 
-  networks:
-    sausage_network:
-      driver: bridge
+networks:
+  sausage_network:
+    driver: bridge
