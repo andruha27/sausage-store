@@ -22,6 +22,11 @@ services:
     container_name: sausage-frontend
     ports:
       - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx.tmpl:/app/nginx.tmpl
+    environment:
+      - DEFAULT_HOST=sausage-backend
     networks:
       - sausage_network
 

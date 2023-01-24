@@ -1,5 +1,5 @@
 # Start from the latest golang base image
-FROM golang:latest as builder
+FROM gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/golang:latest as builder
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -19,7 +19,7 @@ RUN curl https://storage.yandexcloud.net/cloud-certs/CA.pem -o YandexInternalRoo
 
 
 ######## Start a new stage from scratch #######
-FROM alpine:latest  
+FROM gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/alpine:latest
 
 RUN apk --no-cache add ca-certificates
 
