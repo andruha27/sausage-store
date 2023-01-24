@@ -25,17 +25,11 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./nginx.tmpl:/app/nginx.tmpl
-      - web-root:/usr/share/nginx/html
     environment:
       - DEFAULT_HOST=sausage-backend
     networks:
       - sausage_network
-  
-  volumes:
-    web-root:
-      external: true
-      name: sausage-store_web-root
 
-networks:
-  sausage_network:
-    driver: bridge
+  networks:
+    sausage_network:
+      driver: bridge
