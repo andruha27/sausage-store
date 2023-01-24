@@ -24,13 +24,17 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      #- ./frontend/nginx.tmpl:/app/nginx.tmpl
       - ./nginx.tmpl:/app/nginx.tmpl
-      #- certbot-etc:/etc/letsencrypt
-      #- certbot-var:/var/lib/letsencrypt
       - web-root:/usr/share/nginx/html
+    environment:
+      - DEFAULT_HOST=sausage-backend
     networks:
       - sausage_network
+  
+  volumes:
+    web-root:
+      external: true
+      name: sausage-store_web-root
 
 networks:
   sausage_network:
