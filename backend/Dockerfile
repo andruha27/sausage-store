@@ -17,6 +17,9 @@ FROM gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/openjdk:16-jdk-
 ARG VERSION=${VERSION}
 WORKDIR /app
 COPY --from=builder /usr/src/app/YandexInternalRootCA.crt .
+
+RUN apk --no-cache add curl
+
 # подкидываем CA-сертификат Яндекса в хранилище сертификатов для Java
 # создаём пользователя jaruser
 RUN keytool -importcert -file YandexInternalRootCA.crt \

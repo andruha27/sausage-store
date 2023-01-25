@@ -3,3 +3,4 @@ frontend/deploy.sh eol=lf
 backend/backend_deploy.sh eol=lf
 frontend/frontend_deploy.sh eol=lf
 backend-report/backend-report_deploy.sh eol=lf
+docker-compose.yml eol=lf

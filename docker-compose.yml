@@ -1,14 +1,34 @@
-version: "3.3"
+version: "3.4"
 
 services:
-  backend:
+  backend-blue:
     image: gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-backend:latest
-    container_name: sausage-backend
+    container_name: sausage-backend-blue
     env_file:
       - .backend.env
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6
     networks:
       - sausage_network
-      
+
+  backend-green:
+    image: gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-backend:latest
+    container_name: sausage-backend-green
+    env_file:
+      - .backend.env
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6
+    networks:
+      - sausage_network
+
   backend-report:
     image: gitlab.praktikum-services.ru:5050/std-009-047/sausage-store/sausage-report:latest
     container_name: sausage-report
