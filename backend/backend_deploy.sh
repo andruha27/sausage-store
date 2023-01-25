@@ -14,4 +14,4 @@ docker stop backend || true
 docker rm backend || true
 
 set -e
-docker-compose --env-file .backend.env up -d backend
+docker compose --env-file .backend.env up -d backend
