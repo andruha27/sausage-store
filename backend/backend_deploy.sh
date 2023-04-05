@@ -5,6 +5,7 @@ SPRING_CLOUD_VAULT_TOKEN=${SPRING_CLOUD_VAULT_TOKEN}
 VAULT_TOKEN=${SPRING_CLOUD_VAULT_TOKEN}		
 VAULT_HOST=${VAULT_HOST}
 VAULT_PORT=${VAULT_PORT}
+VIRTUAL_HOST=sausage-backend
 EOF
 
 docker network create -d bridge sausage_network || true
