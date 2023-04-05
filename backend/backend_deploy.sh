@@ -1,9 +1,9 @@
 #!/bin/bash
 set +e
 cat > .backend.env <<EOF
-SPRING_DATASOURCE_URL=jdbc:postgresql://${PSQL_HOST}:${PSQL_PORT}/${PSQL_DBNAME}
-SPRING_DATA_MONGODB_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true&replicaSet=rs01
-VIRTUAL_HOST=sausage-backend
+VAULT_TOKEN=${VAULT_TOKEN}	
+VAULT_HOST=${VAULT_HOST}
+VAULT_PORT=${VAULT_PORT}
 EOF
 
 docker network create -d bridge sausage_network || true
