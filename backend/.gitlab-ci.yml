@@ -71,6 +71,7 @@ deploy-backend:
       "export "VERSION=${VERSION}"; 
        export "VAULT_HOST=${VAULT_HOST}";
        export "VAULT_PORT=${VAULT_PORT}";
+       export "SPRING_CLOUD_VAULT_TOKEN=${SPRING_CLOUD_VAULT_TOKEN}";
        export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)";
       /bin/bash -s " < ./backend/backend_deploy.sh 
   needs:
