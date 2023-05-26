@@ -10,7 +10,7 @@ import (
 
 // Repository , used to perform DB oprations
 // Inteface contains basic oprations on report document
-// So that, db opration can be perform easily
+// So that, db opration can be perform easily hi
 type Repository interface {
 
 	// Create, will perform db opration to save report
